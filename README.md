@@ -18,3 +18,19 @@ View your app in AI Studio: https://ai.studio/apps/5c657b06-e1ab-4e85-9662-18e1a
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Running Backend + Frontend Locally
+
+- **Start the backend (Express + Supabase fallback):**
+
+   ```bash
+   node server.js # or `ts-node server.ts` if using ts-node
+   ```
+
+- **Start the frontend (Vite dev server):**
+
+   ```bash
+   npm run dev
+   ```
+
+During development the Vite dev server proxies `/api` to `http://localhost:3000`.
