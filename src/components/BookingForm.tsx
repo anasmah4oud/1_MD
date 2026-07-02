@@ -140,9 +140,22 @@ export default function BookingForm({ onSuccess }: BookingFormProps) {
         body: JSON.stringify(formData)
       });
 
-      const data = await res.json();
+      // Safely handle JSON and non-JSON responses (HTML error pages produce parse errors)
+      let data: any = null;
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = { error: text };
+        }
+      }
+
       if (!res.ok) {
-        throw new Error(data.error || "فشلت عملية حجز الاستمارة");
+        throw new Error(data?.error || `خطأ من الخادم (${res.status}): ${data?.error || 'استجابة غير صالحة'}`);
       }
 
       onSuccess(data.student);
