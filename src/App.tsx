@@ -123,23 +123,9 @@ export default function App() {
       {/* Footer Branding section */}
       <footer className="max-w-4xl w-full mx-auto border-t border-slate-200 pt-6 mt-12 text-center text-[11px] text-slate-400 space-y-2 no-print" id="branding-footer">
         <div className="flex items-center justify-center gap-3 flex-wrap">
-          <span className="flex items-center gap-1 font-bold text-slate-500">
-            <CheckSquare className="w-3.5 h-3.5 text-amber-500" />
-            حجز ذكي ومؤمن
-          </span>
-          <span className="text-slate-300">•</span>
-          <span className="flex items-center gap-1 font-bold text-slate-500">
-            <Award className="w-3.5 h-3.5 text-amber-500" />
-            العام الدراسي 2026 - 2027
-          </span>
-          <span className="text-slate-300">•</span>
-          <span className="flex items-center gap-1 font-bold text-slate-500">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
-            مع لغة الضاد نتميز
-          </span>
         </div>
         <p className="font-semibold text-slate-400">
-          جميع الحقوق محفوظة © منصة الحجز الإلكتروني - الأستاذ محمود الديب 2026
+          جميع الحقوق محفوظة © الأستاذ محمود الديب 2026
         </p>
       </footer>
     </div>
