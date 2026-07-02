@@ -134,7 +134,7 @@ export default function BookingForm({ onSuccess }: BookingFormProps) {
     setErrorMsg(null);
 
     try {
-      const res = await fetch("/api/register", {
+      const res = await fetch(apiUrl("/api/register"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

@@ -5,6 +5,7 @@ import {
   Plus, Radio, Circle, Play
 } from "lucide-react";
 import { Student, Group, EGYPT_GOVERNORATES } from "../types";
+import { apiUrl } from "../api";
 import { motion, AnimatePresence } from "motion/react";
 
 interface AdminDashboardProps {
@@ -45,7 +46,7 @@ export default function AdminDashboard({ onClose }: AdminDashboardProps) {
 
   // Load config & registrations
   useEffect(() => {
-    fetch("/api/config")
+    fetch(apiUrl("/api/config"))
       .then(res => res.json())
       .then(data => setSystemConfig(data))
       .catch(err => console.error("Error loading config", err));
@@ -59,12 +60,12 @@ export default function AdminDashboard({ onClose }: AdminDashboardProps) {
     setLoading(true);
     try {
       // Load groups
-      const groupsRes = await fetch("/api/groups");
+      const groupsRes = await fetch(apiUrl("/api/groups"));
       const groupsData = await groupsRes.json();
       setGroups(groupsData);
 
       // Load registrations
-      const registrationsRes = await fetch("/api/admin/registrations", {
+      const registrationsRes = await fetch(apiUrl("/api/admin/registrations"), {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!registrationsRes.ok) {
@@ -109,7 +110,7 @@ export default function AdminDashboard({ onClose }: AdminDashboardProps) {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/admin/login", {
+      const res = await fetch(apiUrl("/api/admin/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ passcode })
@@ -142,7 +143,7 @@ export default function AdminDashboard({ onClose }: AdminDashboardProps) {
 
     setDeletingId(id);
     try {
-      const res = await fetch(`/api/admin/registrations/${id}`, {
+      const res = await fetch(apiUrl(`/api/admin/registrations/${id}`), {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -167,7 +168,7 @@ export default function AdminDashboard({ onClose }: AdminDashboardProps) {
 
     setResetting(true);
     try {
-      const res = await fetch("/api/admin/reset", {
+      const res = await fetch(apiUrl("/api/admin/reset"), {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -192,7 +193,7 @@ export default function AdminDashboard({ onClose }: AdminDashboardProps) {
 
     setGroupActionLoading(true);
     try {
-      const res = await fetch("/api/admin/groups", {
+      const res = await fetch(apiUrl("/api/admin/groups"), {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -222,7 +223,7 @@ export default function AdminDashboard({ onClose }: AdminDashboardProps) {
   const handleActivateGroup = async (id: string) => {
     setGroupActionLoading(true);
     try {
-      const res = await fetch(`/api/admin/groups/${id}/activate`, {
+      const res = await fetch(apiUrl(`/api/admin/groups/${id}/activate`), {
         method: "PUT",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -245,7 +246,7 @@ export default function AdminDashboard({ onClose }: AdminDashboardProps) {
 
     setGroupActionLoading(true);
     try {
-      const res = await fetch(`/api/admin/groups/${id}`, {
+      const res = await fetch(apiUrl(`/api/admin/groups/${id}`), {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
