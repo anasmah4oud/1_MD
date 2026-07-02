@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Student, EGYPT_GOVERNORATES } from "../types";
+import { apiUrl } from "../api";
 
 interface BookingFormProps {
   onSuccess: (student: Student) => void;

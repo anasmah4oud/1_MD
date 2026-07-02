@@ -85,18 +85,26 @@ function saveLocalData(data: { groups: Group[]; students: Student[] }) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
 }
 
-// Initialize Supabase Client if configured
+// Initialize Supabase Client
 const SUPABASE_URL = process.env.SUPABASE_URL || "";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "";
-const isSupabaseConfigured = SUPABASE_URL.trim() !== "" && SUPABASE_ANON_KEY.trim() !== "";
+const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE || "";
+const useServiceRole = SUPABASE_SERVICE_ROLE.trim() !== "";
+const isSupabaseConfigured = SUPABASE_URL.trim() !== "" && (SUPABASE_ANON_KEY.trim() !== "" || useServiceRole);
 let supabase: any = null;
 
 if (isSupabaseConfigured) {
+  const supabaseKey = useServiceRole ? SUPABASE_SERVICE_ROLE : SUPABASE_ANON_KEY;
   console.log(`[Supabase] Active. URL: ${SUPABASE_URL}`);
-  supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (useServiceRole) {
+    console.log("[Supabase] Using service role key for server-side writes.");
+  } else {
+    console.warn("[Supabase] WARNING: Service role key not configured. Inserts may fail if row-level security is enabled.");
+  }
+  supabase = createClient(SUPABASE_URL, supabaseKey);
 } else {
-  console.log("[Local Database] Active. Local fallback using data.json");
-  loadLocalData(); // Ensure file is seeded
+  console.error("Supabase is not configured. Please set SUPABASE_URL and SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE in .env.");
+  process.exit(1);
 }
 
 const ADMIN_PASSCODE = process.env.ADMIN_PASSCODE || "123456";
@@ -274,59 +282,12 @@ app.post("/api/register", async (req, res) => {
         console.error("Supabase insert error:", insertError);
         const message = insertError?.message || "خطأ في Supabase";
         if (/row-level security/i.test(message) || /violates row-level security/i.test(message)) {
-          console.warn("Falling back to local storage because Supabase row-level security blocked the insert.");
-        } else {
-          throw insertError;
-        }
-      }
-
-      if (insertError) {
-        // Fall back to local storage path if Supabase insert fails due to RLS
-        const localData = loadLocalData();
-        let localActiveGroup = localData.groups.find((g) => g.is_active) || localData.groups[0];
-        if (!localActiveGroup) {
-          localActiveGroup = {
-            id: "group_default",
-            label: "الصف الأول الثانوي - المجموعة العامة للتسجيل",
-            capacity: 1000,
-            registered: 0,
-            is_active: true
-          };
-          localData.groups.push(localActiveGroup);
-        }
-
-        if (localActiveGroup.registered >= localActiveGroup.capacity) {
-          res.status(400).json({ error: "عذرًا، هذه المجموعة مكتملة العدد بالفعل." });
+          res.status(500).json({
+            error: "تم رفض التسجيل بسبب سياسة أمان صفوف Supabase. يرجى التأكد من أن مفتاح SUPABASE_SERVICE_ROLE موجود في .env أو تعديل سياسات Supabase للسماح بالإدراج من الخادم."
+          });
           return;
         }
-
-        const localStudent: Student = {
-          id: "student_" + Math.random().toString(36).substr(2, 9),
-          name: name.trim(),
-          governorate,
-          city: city.trim(),
-          school: school.trim(),
-          phone,
-          father_job: father_job.trim(),
-          father_phone,
-          mother_phone,
-          score: parsedScore,
-          group_id: localActiveGroup.id,
-          created_at: new Date().toISOString()
-        };
-
-        localActiveGroup.registered += 1;
-        localData.students.push(localStudent);
-        saveLocalData(localData);
-
-        res.status(201).json({
-          success: true,
-          student: {
-            ...localStudent,
-            group_label: localActiveGroup.label
-          }
-        });
-        return;
+        throw insertError;
       }
 
       // Group counts are automatically incremented by the Supabase DB trigger we provided!
