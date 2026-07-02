@@ -1,0 +1,6 @@
+{
+  "name": "منصة الأستاذ محمود الديب للحجز",
+  "description": "منصة الحجز الإلكتروني الذكية لطلاب الصف الأول الثانوي في مادة اللغة العربية للعام الدراسي 2026 - 2027",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
