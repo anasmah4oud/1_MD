@@ -71,7 +71,6 @@ export default function App() {
         <div className="flex items-center gap-2.5">
           <div className="text-right">
             <h1 className="text-sm md:text-base font-black text-slate-800 leading-none">الأستاذ محمود الديب</h1>
-            <span className="text-[10px] text-amber-600 font-bold">رائد تدريس اللغة العربية للثانوية العامة</span>
           </div>
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-amber-400 flex items-center justify-center text-slate-950 shadow-md shadow-amber-500/10">
             <BookOpen className="w-5 h-5" />
