@@ -14,10 +14,17 @@ const HOST = process.env.HOST || "0.0.0.0";
 app.use(express.json());
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  const origin = (req.headers.origin as string) || "*";
+  // Echo the request origin so browsers accept the response from cross-origin pages.
+  // In production you should restrict this to a whitelist of known origins.
+  res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  // Whether to allow cookies/credentials. Keep false unless you need them and then set a specific origin.
+  res.setHeader("Access-Control-Allow-Credentials", "false");
+
   if (req.method === "OPTIONS") {
+    // Respond to preflight immediately with the CORS headers
     return res.sendStatus(204);
   }
   next();
